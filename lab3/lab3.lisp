@@ -12,8 +12,8 @@
 
 (defun my-remove-if (funcp lst)
   (cond ((null lst) nil)
-	((not (funcall funcp (car lst))) (append (list (car lst)) (my-remove-if funcp (cdr lst))))
+	((not (funcall funcp (car lst))) (cons (car lst) (my-remove-if funcp (cdr lst))))
 	(t (my-remove-if funcp (cdr lst)))))
 
 (defun funcp (number)
-  (if (evenp (* number number)) t nil))
+  (evenp (* number number)))
