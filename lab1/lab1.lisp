@@ -64,3 +64,4 @@
 		  (%preorder (left-branch tree) (concatenate 'string acc "---"))
 		  (%preorder (right-branch tree) (concatenate 'string acc "---"))))))
       (%preorder tree acc-str))))
+
