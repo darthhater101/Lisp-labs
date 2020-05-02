@@ -1,0 +1,3 @@
+(defun differentiate (var expr)
+  (cond (((number expr) 0)
+	 ((symbol expr) (if (eq expr var) 1 0)))))
