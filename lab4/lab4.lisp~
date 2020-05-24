@@ -1,0 +1,15 @@
+(defclass binary-tree ()
+  ((tree :accessor container)))
+
+(defclass associative-list ()
+  (asc-list))
+
+(defgeneric dict-get (dict key))
+(defgeneric dict-add (dict key value))
+(defgeneric dict-delete (dict key))
+
+(defmethod dict-get ((dict binary-tree) key)
+  ())
+
+(defmethod dic-get ((dict associative-list)))
+
