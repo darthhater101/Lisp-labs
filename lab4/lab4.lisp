@@ -62,9 +62,12 @@
 		  (left-branch (cadr tree)))
 	       (cond
 		 ((null root) nil)
-		 (t (append (list root) (tree-to-list left-branch) (tree-to-list right-branch)))))))
-    (let* ((buff (remove-if (lambda (x)
-			      (eq (car x) key)) (%tree-to-list (container dict))))
+		 (t (append (list root) (%tree-to-list left-branch) (%tree-to-list right-branch)))))))
+    (let* ((del-val nil)
+	   (buff (remove-if (lambda (x)
+			      (when (eq (car x) key)
+				(setf del-val (cdr x))))
+			    (%tree-to-list (container dict))))
 	   (elem-not-exist (equal buff (%tree-to-list (container dict)))))
       (if elem-not-exist
 	  (return-from dict-delete (values nil nil))
@@ -72,8 +75,8 @@
 	    (setf (container dict) '())
 	    (dolist (elem buff)
 	      (dict-add dict (car elem) (cdr elem)))
-	    (return-from dict-delete (values 1 t))))))) ;; TODO values when elem is deleted
-  
+	    (return-from dict-delete (values del-val t)))))))
+
 
 (defmethod dict-get ((dict associative-list) key)
   (dolist (x (container dict))
@@ -91,5 +94,10 @@
   (values nil nil))
 
 (defmethod dict-delete ((dict associative-list) key)
-  (setf (container dict) (remove-if (lambda (x)
-				      (eq (car x) key)) (container dict)))) ;; TODO values for both var
+  (let ((del-val nil))
+    (setf (container dict) (remove-if (lambda (x)
+					(when (eq (car x) key)
+					  (setf del-val (cdr x)))) (container dict)))
+    (if del-val
+	(values del-val t)
+	(values nil nil))))
