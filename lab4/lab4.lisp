@@ -55,28 +55,29 @@
     (values nil nil)))
 	       
 (defmethod dict-delete ((dict binary-tree) key)
-  (labels ((%tree-to-list (tree)
-	     (let
-		 ((root (car tree))
-		  (right-branch (caddr tree))
-		  (left-branch (cadr tree)))
-	       (cond
-		 ((null root) nil)
-		 (t (append (list root) (%tree-to-list left-branch) (%tree-to-list right-branch)))))))
-    (let* ((del-val nil)
-	   (buff (remove-if (lambda (x)
-			      (when (eq (car x) key)
-				(setf del-val (cdr x))))
-			    (%tree-to-list (container dict))))
-	   (elem-not-exist (equal buff (%tree-to-list (container dict)))))
-      (if elem-not-exist
-	  (return-from dict-delete (values nil nil))
-	  (progn
-	    (setf (container dict) '())
-	    (dolist (elem buff)
-	      (dict-add dict (car elem) (cdr elem)))
-	    (return-from dict-delete (values del-val t)))))))
-
+  (let
+      ((res-tree nil)
+       (del-val (list nil nil)))
+    (labels ((%delete (tree)
+	       (setf (container dict) nil)
+	       (let
+		   ((root (car tree))
+		    (right-branch (caddr tree))
+		    (left-branch (cadr tree)))
+		 (cond
+		   ((null root) nil)
+		   ((string= key (car root))
+		    (setf del-val (list (cdr root) t))
+		    (%delete left-branch)
+		    (%delete right-branch))
+		   (t
+		    (setf (container dict) res-tree)
+		    (dict-add dict (car root) (cdr root))
+		    (setf res-tree (container dict))
+		    (%delete left-branch) (%delete right-branch))))
+	       res-tree))
+      (setf (container dict) (%delete (container dict)))
+      (values (car del-val) (cadr del-val)))))
 
 (defmethod dict-get ((dict associative-list) key)
   (dolist (x (container dict))
