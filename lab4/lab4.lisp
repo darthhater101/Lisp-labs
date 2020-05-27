@@ -79,6 +79,20 @@
       (setf (container dict) (%delete (container dict)))
       (values (car del-val) (cadr del-val)))))
 
+(defmethod tree-print ((dict binary-tree))
+  (let ((acc-str (make-string 2 :initial-element #\-)))
+    (labels ((%preorder (tree acc)
+	       (let
+		   ((root (car tree))
+		    (left-branch (cadr tree))
+		    (right-branch (caddr tree)))
+		 (cond
+		   ((null tree) nil)
+		   (t (print (concatenate 'string acc (write-to-string root)))
+		      (%preorder left-branch (concatenate 'string acc "---"))
+		      (%preorder right-branch (concatenate 'string acc "---")))))))
+      (%preorder (container dict) acc-str))))
+  
 (defmethod dict-get ((dict associative-list) key)
   (dolist (x (container dict))
     (when (eq (car x) key)
